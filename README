@@ -1,0 +1,6 @@
+About
+    A base64 implementation with lua binding conforms to RFC4648 specification.
+    Writes it for exercise.
+
+Usage
+    make lua lib gen test clean
