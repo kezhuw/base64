@@ -4,3 +4,5 @@ About
 
 Usage
     make lua lib gen test clean
+
+    See base64_test.lua for lua API usage.
