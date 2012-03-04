@@ -73,14 +73,16 @@ $(foreach src, $(CGENSRCS), $(eval $(call build_cgen, $(src))))
 $(foreach src, $(GGENSRCS), $(eval $(call build_ggen, $(src))))
 $(foreach src, $(LIBSRCS), $(eval $(call build_o, $(src))))
 
-gen : mode64.c base64_test.h
+del :
+	$(RM) mode64.c base64_test.h
+gen : del mode64.c base64_test.h
 mode64.c : $(BUILD)/genmode
 	./$<
 base64_test.h: $(BUILD)/gentest
 	./$<
 
 LIBOBJS := $(addprefix $(BUILD_O)/, $(addsuffix .o, $(basename $(LIBSRCS))))
-lib : gen $(LIBNAME)
+lib : $(LIBNAME) | mode64.c base64_test.h
 $(LIBNAME) : $(LIBOBJS)
 	@$(AR) $(BUILD)/$(LIBNAME) $^
 
@@ -95,6 +97,6 @@ test : lua lib $(TESTEXCS)
 	$(LUA) $(LUATEST)
 
 clean :
-	-$(RM) $(BUILD) mode64.c base64_test.h base64.so
+	-$(RM) $(BUILD) base64.so
 
 .PHONY : all gen lib test clean
