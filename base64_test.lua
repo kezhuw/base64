@@ -4,16 +4,16 @@ local map = "1qaz2wsx3edc4rfvbgt56yhnmju78ik,.lo90p;/'[-Q#$Y*&XM<>N~`ASRTOP()\""
 local pad = "!"
 
 local test = {}
-test[#test] = "base64"
-test[#test] = "o13=c./4230c-a]\'"
-test[#test] = map
-test[#test] = "$c*.<[}|?'\"t}{]-=IOUE4#"
-test[#test] = "WkdSa1hISmtaR1JrWEhKY2JtUmtaR1JjYm1Oall3bz0="
-test[#test] = "WjBHUjNYSDRKYWtaR1JYSEpjYm1Sa1pHUmNibU5qWXdvPTkw"
-test[#test] = "bGVhc3VyZS4="
-test[#test] = "28c930-acgoh.r>;']\\rt"
-test[#test] = "cidsfaooewo412843c13-534209"
-test[#test] = "MjhjOTMwLWFjZ29oLnI-OyddXHJ0"
+test[#test+1] = "base64"
+test[#test+1] = "o13=c./4230c-a]\'"
+test[#test+1] = map
+test[#test+1] = "$c*.<[}|?'\"t}{]-=IOUE4#"
+test[#test+1] = "WkdSa1hISmtaR1JrWEhKY2JtUmtaR1JjYm1Oall3bz0="
+test[#test+1] = "WjBHUjNYSDRKYWtaR1JYSEpjYm1Sa1pHUmNibU5qWXdvPTkw"
+test[#test+1] = "bGVhc3VyZS4="
+test[#test+1] = "28c930-acgoh.r>;']\\rt"
+test[#test+1] = "cidsfaooewo412843c13-534209"
+test[#test+1] = "MjhjOTMwLWFjZ29oLnI-OyddXHJ0"
 
 -- API usage, beg:{
 for i=1,#test do
