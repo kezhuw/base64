@@ -3,6 +3,6 @@ About
     Writes it for exercise.
 
 Usage
-    make lua lib gen test clean
+    make lualib clib test clean
 
     See base64_test.lua for lua API usage.
