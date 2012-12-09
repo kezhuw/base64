@@ -97,9 +97,11 @@ TestScheme(void) {
 	size_t declen;
 	base64_scheme_decode(sch, enc, enclen, dec, &declen);
 	dec[declen] = '\0';
-	printf("raw[%zu]: %s\n", rawlen, raw);
-	printf("enc[%zu]: %s\n", enclen, enc);
-	printf("dec[%zu]: %s\n", declen, dec);
+	if (strcmp(raw, dec) != 0) {
+		fprintf(stderr, "MAP:\n%s\n\n",  map);
+		fprintf(stderr, "raw:\n%s\nenc:\n%s\ndec:\n%s\n", raw, enc, dec);
+		abort();
+	}
 }
 
 int
@@ -112,5 +114,6 @@ main(void) {
 	TestUrlsafeEncode();
 	TestUrlsafeDecode();
 	TestScheme();
+	puts("TEST PASSED");
 	return 0;
 }
