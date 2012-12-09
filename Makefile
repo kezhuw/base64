@@ -12,17 +12,17 @@ RM := rm -rf
 CD := cd
 MKDIR := mkdir -p
 
-LIBSRCS := base64.c
-LIBNAME := libbase64.a
-LUASRCS := base64_lua.c
-LUANAME := base64.so
+CLIB_SRCS := base64.c
+CLIB_NAME := libbase64.a
+LUALIB_SRCS := base64_lua.c
+LUALIB_FILE := base64.so
 TESTSRCS := base64_test.c
 LUATEST := base64_test.lua
 
 CGENSRCS = genmode.c
 GGENSRCS = gentest.go
 
-all : gen lua lib test
+all : gen lualib clib test
 
 BUILD = build
 BUILD_O = $(BUILD)/o
@@ -40,7 +40,7 @@ BAS := $(basename $(notdir $(1)))
 OBJ := $(BUILD_O)/$$(BAS).o
 $$(OBJ) : | $(BUILD_O)
 $$(OBJ) : $(1)
-	$(CC) $(CFLAGS) -c -o $$@ $$^
+	$(CC) $(CFLAGS) -fPIC -c -o $$@ $$^
 endef
 
 define build_cgen
@@ -71,7 +71,7 @@ endef
 
 $(foreach src, $(CGENSRCS), $(eval $(call build_cgen, $(src))))
 $(foreach src, $(GGENSRCS), $(eval $(call build_ggen, $(src))))
-$(foreach src, $(LIBSRCS), $(eval $(call build_o, $(src))))
+$(foreach src, $(CLIB_SRCS), $(eval $(call build_o, $(src))))
 
 del :
 	$(RM) mode64.c base64_test.h
@@ -81,22 +81,28 @@ mode64.c : $(BUILD)/genmode
 base64_test.h: $(BUILD)/gentest
 	./$<
 
-LIBOBJS := $(addprefix $(BUILD_O)/, $(addsuffix .o, $(basename $(LIBSRCS))))
-lib : $(LIBNAME) | mode64.c base64_test.h
-$(LIBNAME) : $(LIBOBJS)
-	@$(AR) $(BUILD)/$(LIBNAME) $^
+CLIB_OBJS := $(addprefix $(BUILD_O)/, $(addsuffix .o, $(basename $(CLIB_SRCS))))
+CLIB_FILE = $(BUILD)/$(CLIB_NAME)
+clib : $(CLIB_FILE) | mode64.c
+$(CLIB_FILE) : $(CLIB_OBJS)
+	@$(AR) $@ $^
 
-lua : lib $(LUANAME)
-$(LUANAME) : $(LUASRCS)
-	$(CC) $(CFLAGS) -shared -o $(LUANAME) $^ -L/usr/local/lib -Lbuild -lbase64 -llua
+lualib : clib $(LUALIB_FILE)
+$(LUALIB_FILE) : $(LUALIB_SRCS)
+	$(CC) $(CFLAGS) -shared -fPIC -o $(LUALIB_FILE) $^ -Lbuild -lbase64
+
+test : ctest luatest
 
 $(foreach src, $(TESTSRCS), $(eval $(call build_test, $(src))))
 TESTEXCS := $(addprefix $(BUILD_TEST)/, $(basename $(TESTSRCS)))
-test : lua lib $(TESTEXCS)
-	$(foreach t, $(TESTEXCS), $(eval $(call shell, $(t))))
+ctest : clib base64_test.h $(TESTEXCS)
+#	$(foreach t, $(TESTEXCS), $(eval $(call shell, $(t))))
+	./$(BUILD_TEST)/base64_test
+
+luatest : lualib
 	$(LUA) $(LUATEST)
 
 clean :
 	-$(RM) $(BUILD) base64.so
 
-.PHONY : all gen lib test clean
+.PHONY : all gen clib lualib test clean
